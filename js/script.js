@@ -2,13 +2,17 @@ const overview = document.querySelector(".overview");
 // where the profile information will appear
 const username = "asamcclellan";
 // github username
+const repoList = document.querySelector(".repo-list");
+// list where repos display
 
 const getUserData = async function () {
     const res = await fetch (`https://api.github.com/users/${username}`);
     // surround the template in backticks since we're using a template literal
     const data = await res.json();
     displayUserInfo(data);
+    fetchRepos();
 }
+// API call for user data
 
 getUserData();
 
@@ -28,4 +32,20 @@ const displayUserInfo = function (data) {
     </div>
     `;
     overview.append(userInfo);
+}
+// create div with class user-info and building profile info
+
+const fetchRepos = async function () {
+    const res = await fetch(`https://api.github.com/users/${username}/repos?sort=last&perpage=100`);
+    const data = await res.json();
+    displayRepoInfo(data);
+}
+
+const displayRepoInfo = function (repos) {
+    for (let repo of repos) {
+        const li = document.createElement("li");
+        li.classList.add("repo");
+        li.innerHTML = `<h3>${repo.name}</h3>`;
+        repoList.append(li);
+    }
 }
